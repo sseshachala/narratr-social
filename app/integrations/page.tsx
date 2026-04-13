@@ -7,6 +7,7 @@ import { ProviderCard } from '@/components/integrations/ProviderCard';
 import { AssetsPanel } from '@/components/integrations/AssetsPanel';
 import { ContentPanel } from '@/components/integrations/ContentPanel';
 import { AnalyticsPanel } from '@/components/integrations/AnalyticsPanel';
+import { SectionCard } from '@/components/ui/SectionCard';
 import type { IntegrationAsset, ProviderId } from '@/types';
 
 type ProviderState = {
@@ -156,34 +157,40 @@ export default function IntegrationsPage() {
       <div className="space-y-6">
         {error && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">{error}</div>}
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <ProviderCard provider="facebook" title={providerInfo.facebook.title} description={providerInfo.facebook.description} connected={state.facebook.connected} onConnect={() => { window.location.href = '/api/integrations/facebook/start'; }} onDisconnect={() => void disconnect('facebook')} />
-          <ProviderCard provider="instagram" title={providerInfo.instagram.title} description={providerInfo.instagram.description} disabled />
-          <ProviderCard provider="twitter" title={providerInfo.twitter.title} description={providerInfo.twitter.description} connected={state.twitter.connected} onConnect={() => { window.location.href = '/api/integrations/twitter/start'; }} onDisconnect={() => void disconnect('twitter')} />
-        </div>
+        <SectionCard title="Connected channels" description="Keep each provider in the same card system used across the workspace so connections, analytics, and content feel part of one flow.">
+          <div className="grid gap-6 xl:grid-cols-3">
+            <ProviderCard provider="facebook" title={providerInfo.facebook.title} description={providerInfo.facebook.description} connected={state.facebook.connected} onConnect={() => { window.location.href = '/api/integrations/facebook/start'; }} onDisconnect={() => void disconnect('facebook')} />
+            <ProviderCard provider="instagram" title={providerInfo.instagram.title} description={providerInfo.instagram.description} disabled />
+            <ProviderCard provider="twitter" title={providerInfo.twitter.title} description={providerInfo.twitter.description} connected={state.twitter.connected} onConnect={() => { window.location.href = '/api/integrations/twitter/start'; }} onDisconnect={() => void disconnect('twitter')} />
+          </div>
+        </SectionCard>
 
         {state.facebook.connected && (
-          <section className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="space-y-4">
             <AssetsPanel title="Facebook Pages" assets={state.facebook.assets} onSelect={selectFacebookAsset} />
-            <div className="flex gap-3">
-              <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white" onClick={() => void fetchAnalytics('facebook', 'range')}>Facebook 30-day analytics</button>
-              <button className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void fetchAnalytics('facebook', 'content')}>Selected post analytics</button>
-            </div>
+            <SectionCard title="Facebook analytics actions" description="Run a range query or inspect a selected post with the same workspace styling used on Posts and Create Post.">
+              <div className="flex flex-wrap gap-3">
+                <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white" onClick={() => void fetchAnalytics('facebook', 'range')}>Facebook 30-day analytics</button>
+                <button className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void fetchAnalytics('facebook', 'content')}>Selected post analytics</button>
+              </div>
+            </SectionCard>
             <ContentPanel title="Facebook Posts" items={state.facebook.content} selectedId={state.facebook.selectedContentId} onSelect={(id) => setState((prev) => ({ ...prev, facebook: { ...prev.facebook, selectedContentId: id } }))} />
             <AnalyticsPanel results={state.facebook.analytics} />
-          </section>
+          </div>
         )}
 
         {state.twitter.connected && (
-          <section className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="space-y-4">
             <AssetsPanel title="Twitter Profiles" assets={state.twitter.assets} />
-            <div className="flex gap-3">
-              <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white" onClick={() => void fetchAnalytics('twitter', 'range')}>Twitter account analytics</button>
-              <button className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void fetchAnalytics('twitter', 'content')}>Selected tweet analytics</button>
-            </div>
+            <SectionCard title="Twitter analytics actions" description="Use these actions to compare account-level metrics with a specific tweet in a consistent card layout.">
+              <div className="flex flex-wrap gap-3">
+                <button className="rounded-xl bg-slate-900 px-4 py-2 text-sm text-white" onClick={() => void fetchAnalytics('twitter', 'range')}>Twitter account analytics</button>
+                <button className="rounded-xl border border-slate-300 px-4 py-2 text-sm" onClick={() => void fetchAnalytics('twitter', 'content')}>Selected tweet analytics</button>
+              </div>
+            </SectionCard>
             <ContentPanel title="Tweets" items={state.twitter.content} selectedId={state.twitter.selectedContentId} onSelect={(id) => setState((prev) => ({ ...prev, twitter: { ...prev.twitter, selectedContentId: id } }))} />
             <AnalyticsPanel results={state.twitter.analytics} />
-          </section>
+          </div>
         )}
       </div>
     </AppShell>
